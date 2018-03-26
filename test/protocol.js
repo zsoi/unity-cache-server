@@ -180,6 +180,33 @@ describe("Protocol", () => {
                 });
             });
 
+            describe("INTEGRITY requests", function () {
+                this.slow(1000);
+
+                const self = this;
+
+                 beforeEach(async () => {
+                    client = await getClientPromise(server.port);
+
+                    // The Unity client always sends the version once on-connect. i.e., the version should not be pre-pended
+                    // to other request data in the tests below.
+                    await clientWrite(client, helpers.encodeInt32(consts.PROTOCOL_VERSION));
+                });
+
+                it("should report cache size", (done) => {
+                    client.on("data", function(data) {
+                        var version = helpers.readUInt32(data);
+                        assert.strictEqual(version, consts.PROTOCOL_VERSION);
+                        var size = helpers.readUInt64(data);
+                        assert.strictEqual(size, 0);
+                    }).on('dataEnd', function () {
+                        done();
+                    });;
+
+                    clientWrite(client, encodeCommand(cmd.integritySize)).catch(err => done(err));
+                });
+            });
+
             describe("GET requests", function () {
                 this.slow(1000);
 

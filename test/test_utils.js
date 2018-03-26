@@ -158,5 +158,6 @@ exports.cmd = {
     transactionStart: "ts",
     transactionEnd: "te",
     integrityVerify: "icv",
-    integrityFix: "icf"
+    integrityFix: "icf",
+    integritySize: "is"
 };
